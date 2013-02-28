@@ -1,0 +1,35 @@
+<?xml-stylesheet type="text/css" href="/assets/test_osm.css?body=1"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="<%=@b%>" height="<%=@h%>">
+  <!-- Hintergrund -->
+  <polygon points="0,0 <%=@b%>,0 <%=@b%>,<%=@h%> 0,<%=@h%>" style="fill:white;stroke:none"/>
+  <%diff_x=@x_max-@x_min%>
+  <%diff_y=@y_max-@y_min%>
+  <%#not_nil=@ways.select{|el| el["tags"] !=nil }%>
+  <!-- Karte -->
+  <!--TODO Calculate new KO befor Loop-->
+  <!--x_min:<%=@x_min%>-->
+  <!--x_max:<%=@x_max%>-->
+  <!--y_min:<%=@y_min%>-->
+  <!--y_max:<%=@y_max%>-->
+  <%@render_keys.each do |key|%>
+    <%render_elements=@ways.select{|el| el["tags"][key]!=nil}%>
+    <%if render_elements!=nil%>
+      <%render_elements.each do |element|%>
+        <%if element["nodes"].first==element["nodes"]%>
+          <polygon
+        <%else%>
+          <polyline
+        <%end%>
+        class="<%=key+'_'+element['tags'][key]%>" points="
+        <%element["nodes"].each do |node|%>
+          <%#TODO Fix Speed, Suche ist viel zu langsam%>
+          <%knoten=@nodes.detect{|el| el["id"] ==node}%>
+          <%y=-1*(knoten["lat"].to_f-@y_max)/diff_y*@h%>
+          <%x=(knoten["lon"].to_f-@x_min)/diff_x*@b%>
+          <%=x.to_s+','+y.to_s+' '%>
+        <%end%>
+        "/>
+      <%end%>
+    <%end%>
+  <%end%>
+</svg>
