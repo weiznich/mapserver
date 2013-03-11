@@ -1,0 +1,169 @@
+// Place all the styles related to the test_osm controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+polygon {
+    fill: black;
+}
+
+polyline{
+  fill:none;
+  stroke:black;
+  stroke-width:3;
+  visibility:visible;
+}
+.leisure_park, .leisure_playground{
+  fill:green;
+  stroke-width:1px;
+}
+.leisure_garden{
+  fill:green;
+  stroke-width:1px;
+}
+/*
+ * Gebäute
+ */
+@mixin building($color){
+  fill:$color;
+  stroke:black;
+  stroke-width:1;
+}
+.building_yes, .building_apartments,.amenity_hospital, .building_garages , .building_dormitory, .amenity_social_facility{
+  @include building(brown);
+}
+.building_no{
+  @include building(green)
+}
+.building_church{
+  @include building(red)
+}
+.amenity_parking{
+  fill:#f7efb7;
+  stroke-width:1px;
+}
+.amenity_university,
+.amenity_college,
+.amenity_school,
+.amenity_kindergarten{
+  fill:#f0f0d8;
+  fill-opacity:0.2;
+  stroke-width:1px;
+}
+/*
+ * Landnutzung
+ */
+@mixin landuse($color){
+  fill:$color;
+  stroke:black;
+  stroke-width:1;
+}
+.landuse_allotments {
+  @include landuse(#e5c7ab);
+}
+.landuse_village_green {
+  @include landuse(green);
+}
+.landuse_meadow, .landuse_grass{
+  @include landuse(#cfeca8);
+}
+.landuse_residential{
+  @include landuse(#efcfc3)
+}
+.landuse_forest , .natural_wood{
+  @include landuse(#8dc56c)
+}
+.landuse_farmland, .landuse_farm{
+  @include landuse(#ead8bd)
+}
+.landuse_farmyard{
+  @include landuse(#ddbf92)
+}
+.landuse_commercial{
+  @include landuse(#efc8c8)
+}
+.landuse_garages{
+  @include landuse(#999966);
+  fill-opacity:0.2;
+}
+/*
+ *Wege
+ */
+@mixin highway($color,$width){
+  fill:none;
+  stroke:$color;
+  stroke-width:$width;
+}
+.highway_crossing{
+  stroke: gray;
+}
+.highway_primary, .highway_primary_link{
+  @include highway(red,5px)
+}
+.highway_secondary , .highway_secondary_link{
+  @include highway(#FF9900,5px)
+}
+.highway_tertiary, .highway_tertiary_link{
+  @include highway(yellow,5px)
+}
+.highway_residential, .highway_living_street, .highway_unclassified{
+  @include highway(gray,2px)
+}
+.highway_service{
+  @include highway(gray,2px)
+}
+
+.highway_footway, .highway_pedestrian{
+  @include highway(olive,1.5px)
+}
+
+.highway_path{
+  @include highway(olive,1.5px)
+}
+
+.highway_steps{
+  @include highway(gray,2px)
+}
+
+.highway_track{
+  @include highway(olive,2px)
+}
+.highway_platform{
+  fill:black;
+}
+/*
+ * Schienen
+ */
+@mixin railway($color,$width,$l){
+  stroke-dasharray:$l,$l/2;
+  fill:none;
+  stroke:$color;
+  stroke-width:$width;
+}
+.railway_rail{
+  @include railway(black,2px,7px)
+}
+/*
+ * Sonstiges
+ */
+.landuse_cemetery{
+  fill:#aacbaf;
+  stroke-width:1px;
+}
+.leisure_pitch{
+  fill:#8ad3af;
+  stroke-width:1px
+}
+.waterway_stream{
+  @include highway(blue,5px);
+}
+.waterway_drain{
+  stroke-width:0px;
+}
+.leisure_swimming_pool{
+  fill:#b5d0d0;
+  stroke-width:1px;
+}
+.natural_water{
+  fill:blue;
+}

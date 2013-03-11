@@ -37,5 +37,9 @@ $(->
         $('#image').width(w)
         $('#image').height(h)
     }
-  
+   
+  $(".layout").change ->   
+    css=$(".layout :selected").val()
+    $('#map_css').attr('href',"/assets/"+css+".css?body=1")
+    #alert "/assets/"+css+".css?body=1"
 )
