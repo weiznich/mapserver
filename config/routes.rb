@@ -1,14 +1,12 @@
 Mapserver::Application.routes.draw do
-  get "home/index"
 
-  #get "test_osm/show"
-  post "osm/show"
+  get "osm/show"
 
 
 
   match "osm/show/:x_min/:x_max/:y_min/:y_max/:b/:h(/:format)" => "osm#show" , :constraints => {:x_min => /\-*\d+.\d+/ , :x_max => /\-*\d+.\d+/ , :y_min => /\-*\d+.\d+/ , :y_max => /\-*\d+.\d+/ } ,:defaults => { :format => 'svg' }
 
-  root :to => 'home#index'
+#  root :to => 'home#index'
   
 
   # The priority is based upon order of creation:

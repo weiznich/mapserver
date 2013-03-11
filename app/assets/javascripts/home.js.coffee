@@ -26,8 +26,8 @@ $(->
     $('#image').html('<p>Loading Map</p>')
     $.ajax {
       url: path,
-      #type: 'get'
-      type: 'post'
+      type: 'get'
+      #type: 'post'
       success:(data) ->
         if format=='svg'
           console.log 'svg'
