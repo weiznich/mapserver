@@ -35,3 +35,6 @@ pickle-email-*.html
 *.lock
 db/*.yml
 public/*.json
+ext/*.o
+ext/*.hi
+parse_map

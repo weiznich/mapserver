@@ -3,16 +3,20 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 
-polygon {
+path {
     fill: black;
 }
 
-polyline{
+path{
   fill:none;
   stroke:black;
   stroke-width:3;
   visibility:visible;
 }
+.none{
+  visibility:hidden;
+}
+
 .leisure_park, .leisure_playground{
   fill:#b6fdb6;
   stroke-width:1px;

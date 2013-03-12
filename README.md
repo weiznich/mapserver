@@ -8,6 +8,8 @@ This is a simple OSM-Mapserver written in Ruby on Rails.
 Clone the Git-repository and run the following commands:
 
     $ bundle install
+    $ cabal install aeson
+    $ make
 
 Then you can run a server via
 
