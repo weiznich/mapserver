@@ -11,6 +11,7 @@ import qualified Data.Aeson.Encode as AE
 import System.Environment
 import System.Exit
 
+
 data Node = Node { node_id  :: Integer
                  , node_typ      :: String
                  , node_lat      :: Float
@@ -66,26 +67,27 @@ get_name (x:xs)
     | otherwise=""
     where 
        str=show(AE.fromValue(snd x))
+
 get_text tags
     | tags ==[]=""
     | name==""=""
     | otherwise=""
     where
       name=get_name tags
-    
-print_all nodes h w diff_x diff_y x_min y_max svg keys (x:xs)=do
+add_elem elem list n=
+    (take n list)++[(head(drop n list))++[elem]]++(drop (n+1) list)
+
+
+print_all nodes h w diff_x diff_y x_min y_max list keys (x:xs)=do
   let node_list=way_nodes x
   let tags= get_tags (way_tags x)
-  let svg1= svg++"<path id=\""++(show(way_id x))++"\" class=\""++(get_id tags keys)++"\" "
-  let svg=svg1 ++ " d=\" " ++(print_nodes nodes x_min y_max h w diff_x diff_y "" node_list)++(get_typ node_list)++"\"/>"++(get_text tags)
-  let name=get_name tags
-
-  
+  let layer_typ=get_id 0 tags keys
+  let svg1="<path id=\""++(show(way_id x))++"\" class=\""++(fst layer_typ)++"\" d=\" " ++(print_nodes nodes x_min y_max h w diff_x diff_y "" node_list)++(get_typ node_list)++"\"/>"++(get_text tags)
   if xs/=[]
   then
-      print_all nodes h w diff_x diff_y x_min y_max (svg++"\n\t") keys xs
+      print_all nodes h w diff_x diff_y x_min y_max (add_elem (svg1++"\n\t") list (snd layer_typ)) keys xs
   else
-      (svg++"\n")
+      add_elem (svg1++"\n") list (snd layer_typ)
 
 test key (x:xs)=do
     print( (show(fst x))==show key)
@@ -95,6 +97,23 @@ test key (x:xs)=do
     else
       return()
 
+
+get_svg str (x:xs)=do
+    let str1=str++(get_svg_layer "" x)
+    if xs/=[]
+    then
+        get_svg str1 xs
+    else
+        str1
+
+get_svg_layer str (x:xs)=do
+    let str1=str++x
+    if xs/=[]
+    then
+        get_svg_layer str1 xs
+    else
+        str1
+
 test_id key (x:xs)
     | show(fst x)==show key=key++"_"++(take ((length str)-6)(drop 3 str)) 
     | xs==[]=""
@@ -102,15 +121,19 @@ test_id key (x:xs)
     where 
        str=show(AE.fromValue(snd x))
 
-get_id tags (x:xs)
-    |tags==[]="none"
-    |(test_id x tags)/=""=test_id x tags
-    |xs==[]="none"
-    |otherwise=get_id tags xs
+get_id n tags (x:xs)
+    |tags==[]=("none",n)
+    |(test_id x tags)/=""=((test_id x tags) , n)
+    |xs==[]=("none",(n+1))
+    |otherwise=get_id (n+1) tags xs
 
 get_prefix ko
     | ko==[]="M "
     | otherwise="L "
+
+get_empty_list stub n
+    | n>=0=get_empty_list (stub++[[""]]) (n-1)
+    | otherwise=stub
 
 print_nodes nodes x_min y_max h w diff_x diff_y ko (x:xs)=do
   let node=(find_node x nodes)
@@ -142,7 +165,9 @@ main=do
   let ways= parse_ways src_ways
   let render_keys=drop 6 args--["landuse","leisure","natural","building","amenity","highway","railway","waterway","historic"]
   let svg="<?xml-stylesheet type=\"text/css\" href=\"/assets/test_osm.css?body=1\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\""++show w++"\" height=\""++show h++"\"><polygon points=\"0,0 "++show w++",0 "++show w++","++show h++" 0,"++show h++"\" style=\"fill:white;stroke:none\"/>\n\t"
-  let svg1=print_all nodes h w diff_x diff_y x_min y_max svg render_keys ways 
-  let svg=svg1++"</svg>"
+  let list=get_empty_list [[""]] ((Prelude.length render_keys)+1)
+  let svg1=print_all nodes h w diff_x diff_y x_min y_max list render_keys ways 
+  let svg2=get_svg svg svg1
+  let svg=svg2++"</svg>"
   putStrLn svg
 
