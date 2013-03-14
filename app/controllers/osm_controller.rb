@@ -1,3 +1,4 @@
+# coding: UTF-8
 class OsmController < ApplicationController
 
   def show
@@ -14,7 +15,6 @@ class OsmController < ApplicationController
     x_max=((b/h)*(y_max-y_min)/(Math.cos (y_min*(Math::PI/180)) ))+x_min
     render_keys=["landuse","leisure","natural","building","amenity","highway","railway","waterway","historic"]
     uri = URI.parse(URI.encode('http://overpass-api.de/api/interpreter?data=[out:json];(node('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');rel(bn)->.x;way('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');node(w)->.x;);out qt;'))
-    puts uri
     #uri= URI.parse(URI.encode('http://localhost:3000/interpreter1.json'))
     http = Net::HTTP.new(uri.host, uri.port)
     response = http.request(Net::HTTP::Get.new(uri.request_uri))
@@ -31,6 +31,14 @@ class OsmController < ApplicationController
       io.close_write
       @svg=io.read
     end
+    @svg.gsub!("\\223","ß")
+    @svg.gsub!("\\252","ü")
+    @svg.gsub!("\\228","ä")
+    @svg.gsub!("\\246","ö")
+    @svg.gsub!("\\214","Ö")
+    @svg.gsub!("\\220","Ü")
+    @svg.gsub!("\\246","Ä")
+    File.open("aus.svg", 'w') { |file| file.write(@svg) }
     respond_to do |format|
 	    format.html # show.html.erb
 	    format.json { render json: response.body }
