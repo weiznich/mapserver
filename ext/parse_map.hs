@@ -68,8 +68,9 @@ get_name (x:xs)
     where 
        str=show(AE.fromValue(snd x))
 
-get_text tags poly id
-    |poly==" Z"=""
+get_text render_text tags poly id
+    | render_text==0=""
+    | poly==" Z"=""
     | tags ==[]=""
     | name==""=""
     | otherwise="\n\t<text>\n\t\t<textPath xlink:href=\"#"++(show id)++"\" id=\""++(show id)++"_text\">\n\t\t\t<tspan >"++name++"</tspan>\n\t\t</textPath>\n\t</text>"
@@ -79,15 +80,15 @@ add_elem elem list n=
     (take n list)++[(head(drop n list))++[elem]]++(drop (n+1) list)
 
 
-print_all nodes h w diff_x diff_y x_min y_max list keys (x:xs)=do
+print_all nodes h w diff_x diff_y x_min y_max list keys render_text (x:xs)=do
   let node_list=way_nodes x
   let tags= get_tags (way_tags x)
   let layer_typ=get_id 0 tags keys
   let typ=(get_typ node_list)
-  let svg1="<path id=\""++(show(way_id x))++"\" class=\""++(fst layer_typ)++"\" d=\" " ++(print_nodes nodes x_min y_max h w diff_x diff_y "" node_list)++typ++"\"/>"++(get_text tags typ (way_id x))
+  let svg1="<path id=\""++(show(way_id x))++"\" class=\""++(fst layer_typ)++"\" d=\" " ++(print_nodes nodes x_min y_max h w diff_x diff_y "" node_list)++typ++"\"/>"++(get_text render_text tags typ (way_id x))
   if xs/=[]
   then
-      print_all nodes h w diff_x diff_y x_min y_max (add_elem (svg1++"\n\t") list (snd layer_typ)) keys xs
+      print_all nodes h w diff_x diff_y x_min y_max (add_elem (svg1++"\n\t") list (snd layer_typ)) keys  render_text xs
   else
       add_elem (svg1++"\n") list (snd layer_typ)
 
@@ -163,13 +164,14 @@ main=do
   let diff_y=y_max-y_min
   let h=(read(args!!4))::Float--600
   let w=(read(args!!5))::Float--1000
+  let render_text=(read(args!!6))::Integer
   let nodes= parse_nodes src_nodes
   let ways= parse_ways src_ways
-  let render_keys=drop 6 args--["landuse","leisure","natural","building","amenity","highway","railway","waterway","historic"]
+  let render_keys=drop 7 args--["landuse","leisure","natural","building","amenity","highway","railway","waterway","historic"]
   let svg="<?xml-stylesheet type=\"text/css\" href=\"/assets/test_osm.css?body=1\"?>\n<svg viewBox=\"0 0 "++(show w)++" "++(show h)++"\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:lang=\"de\">\n\t"
   -- <svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\""++show w++"\" height=\""++show h++"\"><polygon points=\"0,0 "++show w++",0 "++show w++","++show h++" 0,"++show h++"\" style=\"fill:white;stroke:none\"/>\n\t"
   let list=get_empty_list [[""]] ((Prelude.length render_keys)+1)
-  let svg1=print_all nodes h w diff_x diff_y x_min y_max list render_keys ways 
+  let svg1=print_all nodes h w diff_x diff_y x_min y_max list render_keys render_text ways 
   let svg2=get_svg svg svg1
   let svg=svg2++"</svg>"
   putStrLn svg

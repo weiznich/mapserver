@@ -15,6 +15,16 @@ Then you can run a server via
 
     $ rails server
 
+## Systemrequirements
+Known to work with:
+
+  ghc(7.6.2)
+  ruby(1.9.3)
+  rails(3.2.12)
+  gem(1.8.24)
+  bundle(1.2.3)
+  cabal-install(0.14.0)
+
 ## Feedback
 
 Via my Github profile:

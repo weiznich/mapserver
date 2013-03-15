@@ -1,6 +1,6 @@
 Mapserver::Application.routes.draw do
 
-  get "osm/show"
+  post "osm/show"
 
 
 
