@@ -1,60 +1,73 @@
 # coding: UTF-8
 class OsmController < ApplicationController
 
-  def show
-    #if params[:render_keys]==nil
-      #respond_to 
-    
+  def show    
     require "net/http"
     require "uri"
-    #paar sachen definieren
-    x_min=params[:x_min].to_f#13.34#Koordinaten Längengrad(linker rand)
-    x_max=params[:x_max].to_f#13.35#Koordinaten Längengrad(rechter rand)
-    y_min=params[:y_min].to_f#50.9#Koordinaten Breitengrad(unterer Rand)
-    y_max=params[:y_max].to_f#50.91#Koordinaten Breitengrad(oberer Rand)
-    b=params[:b].to_f#600#Bildbreite
-    h=params[:h].to_f#700#Bildhöhe
+    #get parameter from request
+    x_min=params[:x_min].to_f
+    x_max=params[:x_max].to_f
+    y_min=params[:y_min].to_f
+    y_max=params[:y_max].to_f
+    b=params[:b].to_f
+    h=params[:h].to_f
     text=0
     if params[:iftext]=="true"
     then
       text=1
     end
     render_keys=params[:render_keys]
+
+    #calculate mapwidth
     x_max=((b/h)*(y_max-y_min)/(Math.cos (y_min*(Math::PI/180)) ))+x_min
-    #render_keys=["landuse","leisure","natural","building","amenity","highway","railway","waterway","historic"]
-    uri = URI.parse(URI.encode('http://overpass-api.de/api/interpreter?data=[out:json];(node('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');rel(bn)->.x;way('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');node(w)->.x;);out qt;'))
-    #uri= URI.parse(URI.encode('http://localhost:3000/interpreter1.json'))
+
+    #get data from overpass-api
+    #uri = URI.parse(URI.encode('http://overpass-api.de/api/interpreter?data=[out:json];(node('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');rel(bn)->.x;way('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');node(w)->.x;);out qt;'))
+    uri= URI.parse(URI.encode('http://localhost:3000/interpreter1.json'))
     http = Net::HTTP.new(uri.host, uri.port)
     response = http.request(Net::HTTP::Get.new(uri.request_uri))
-    objArray = JSON.parse(response.body)
-    nodes=objArray["elements"].select{|el| el["type"] =="node" }
-    ways=objArray["elements"].select{|el| el["type"] =="way"&&el["tags"]!=nil }
-    @svg=""
-    keys=""
-    render_keys.each do |key|
-      keys+=" "+key
-    end
+    
+    if params[:format]=="svg"
+    then
+      #parse json
+      objArray = JSON.parse(response.body)
 
-    t_start=Time.now
-    IO.popen("./parse_map "+x_min.to_s+" "+x_max.to_s+" "+y_min.to_s+" "+y_max.to_s+" "+h.to_s+" "+b.to_s+" "+text.to_s+" "+keys, mode='r+') do |io|
-      io.write (ways.to_json+"\n"+nodes.to_json)
-      io.close_write
-      @svg=io.read
+      #get ways and nodes
+      nodes=objArray["elements"].select{|el| el["type"] =="node" }
+      ways=objArray["elements"].select{|el| el["type"] =="way"&&el["tags"]!=nil }
+      svg=""
+      
+      #parse renderkeys from array to string
+      keys=""
+      render_keys.each do |key|
+        keys+=" "+key
+      end
+
+      #render svg from json
+      t_start=Time.now
+      IO.popen("./parse_map "+x_min.to_s+" "+x_max.to_s+" "+y_min.to_s+" "+y_max.to_s+" "+h.to_s+" "+b.to_s+" "+text.to_s+" "+keys, mode='r+') do |io|
+        io.write (ways.to_json+"\n"+nodes.to_json)
+        io.close_write
+        svg=io.read
+      end
+
+      t=Time.now-t_start
+
+      #make svg string clean
+      svg.gsub!("\\223","ß")
+      svg.gsub!("\\252","ü")
+      svg.gsub!("\\228","ä")
+      svg.gsub!("\\246","ö")
+      svg.gsub!("\\214","Ö")
+      svg.gsub!("\\220","Ü")
+      svg.gsub!("\\246","Ä")
+      svg+="<!--Time: "+t.to_s+" -->"
     end
-    t=Time.now-t_start
-    @svg.gsub!("\\223","ß")
-    @svg.gsub!("\\252","ü")
-    @svg.gsub!("\\228","ä")
-    @svg.gsub!("\\246","ö")
-    @svg.gsub!("\\214","Ö")
-    @svg.gsub!("\\220","Ü")
-    @svg.gsub!("\\246","Ä")
-    @svg+="<!--RenderZeit: "+t.to_s+" -->"
-    File.open("aus.svg", 'w') { |file| file.write(@svg) }
+    
+    #response result
     respond_to do |format|
-	    format.html # show.html.erb
 	    format.json { render json: response.body }
-      format.svg 
+      format.svg { render text: svg.html_safe }
     end
   end
 
