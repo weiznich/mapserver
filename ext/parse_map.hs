@@ -99,9 +99,9 @@ print_all nodes h w diff_x diff_y x_min y_max list keys render_text (x:xs)=do
   let svg1="<path id=\""++(show(way_id x))++"\" class=\""++(fst layer_typ)++"\" d=\" " ++(print_nodes nodes x_min y_max h w diff_x diff_y "" node_list)++typ++"\"/>"++(get_text render_text tags typ (way_id x))
   if xs/=[]
   then
-      print_all nodes h w diff_x diff_y x_min y_max (add_elem (svg1++"\n\t") list (snd layer_typ)) keys  render_text xs
+      print_all nodes h w diff_x diff_y x_min y_max (add_elem svg1 list (snd layer_typ)) keys  render_text xs
   else
-      add_elem (svg1++"\n") list (snd layer_typ)
+      add_elem svg1 list (snd layer_typ)
 
 --find tag
 test key (x:xs)=do
@@ -113,22 +113,23 @@ test key (x:xs)=do
       return()
 
 --parse svg
-get_svg str (x:xs)=do
-    let str1=str++(get_svg_layer "" x)
+get_svg str i keys (x:xs)=do
+    let str1=str++"\n\t<g id=\""++(head(drop i keys))++"\">"++(get_svg_layer "" x)++"\n\t</g>"
     if xs/=[]
     then
-        get_svg str1 xs
+        get_svg str1 (i+1) keys xs
     else
         str1
 
 --parse arrayelement to svg
 get_svg_layer str (x:xs)=do
-    let str1=str++x
+    let str1=str++"\n\t\t"++x
     if xs/=[]
     then
         get_svg_layer str1 xs
     else
         str1
+get_svg_layer str []=" "
 
 --parse classname
 test_id key (x:xs)
@@ -155,7 +156,7 @@ get_empty_list stub n
     | n>=0=get_empty_list (stub++[[""]]) (n-1)
     | otherwise=stub
 
---get svg path out of 
+--get svg path out of nodeobject
 print_nodes nodes x_min y_max h w diff_x diff_y ko (x:xs)=do
   let node=(find_node x nodes)
   let lat= node_lat node
@@ -182,15 +183,15 @@ main=do
   let diff_x=x_max-x_min
   let diff_y=y_max-y_min
   let h=(read(args!!4))::Float
-  let w=(read(args!!5))::Float-
+  let w=(read(args!!5))::Float
   let render_text=(read(args!!6))::Integer
   let nodes= parse_nodes src_nodes
   let ways= parse_ways src_ways
   let render_keys=drop 7 args
-  let svg="<?xml-stylesheet type=\"text/css\" href=\"/assets/test_osm.css?body=1\"?>\n<svg viewBox=\"0 0 "++(show w)++" "++(show h)++"\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:lang=\"de\">\n\t"
-  let list=get_empty_list [[""]] ((Prelude.length render_keys)+1)
+  let svg="<?xml-stylesheet type=\"text/css\" href=\"/assets/test_osm.css?body=1\"?>\n<svg viewBox=\"0 0 "++(show w)++" "++(show h)++"\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:lang=\"de\">"
+  let list=get_empty_list [[""]] ((Prelude.length render_keys)-1)
   let svg1=print_all nodes h w diff_x diff_y x_min y_max list render_keys render_text ways 
-  let svg2=get_svg svg svg1
-  let svg=svg2++"</svg>"
+  let svg2=get_svg svg 0 (render_keys++["none"]) svg1
+  let svg=svg2++"\n</svg>"
   putStrLn svg
 
