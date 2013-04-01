@@ -22,24 +22,8 @@ $(->
     else
       format='svg'
     keys =[]
-    if $('#landuse').is(':checked')
-      keys.push "landuse"
-    if $('#leisure').is(':checked')
-      keys.push "leisure"
-    if $('#natural').is(':checked')
-      keys.push "natural"
-    if $('#building').is(':checked')
-      keys.push "building"
-    if $('#amenity').is(':checked')
-      keys.push "amenity"
-    if $('#highway').is(':checked')
-      keys.push "highway"
-    if $('#railway').is(':checked')
-      keys.push "railway"
-    if $('#waterway').is(':checked')
-      keys.push "waterway"
-    if $('#historic').is(':checked')
-      keys.push "historic"
+    $("input:checkbox").each ->
+      keys.push $(this).attr("id")  if $(this).attr("id") isnt "format_json" and $(this).attr("id") isnt "street_label"  if $(this).is(":checked")
     
     #check mapsize
     if !(lon_min>=-180&&lon_max>lon_min&&lon_max<=180&&lat_min>=-90&&lat_max>lat_min&&lat_max<=90&&w>0&&h>0)
@@ -63,6 +47,7 @@ $(->
         $('#image').width(w)
         $('#image').height(h)
     }
+
   #change maplayout
   $(".layout").change ->   
     css=$(".layout :selected").val()
