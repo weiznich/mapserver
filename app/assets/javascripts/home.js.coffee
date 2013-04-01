@@ -9,9 +9,8 @@ $(->
     lon_max=parseFloat($('#lon_max').val())
     lat_min=parseFloat($('#lat_min').val())
     lat_max=parseFloat($('#lat_max').val())
-
-    w=parseFloat($('#image_w').val())
-    h=parseFloat($('#image_h').val())
+    h=$(window).height()
+    w=$(window).width()-$('#controls').width()-50  
 
     if $('#street_label').is(':checked')
       text=true

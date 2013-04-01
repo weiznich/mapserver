@@ -11,8 +11,8 @@
   </head>
   <body>
     <div id="controls" style="float:left">
-      <h1>Karte</h1>
-      <h3>Koordinaten</h3>
+      <h1>Mapoptions</h1>
+      <h5>Coordinates:</h5>
       <form>
         <p>
           Longtitude min<br/>
@@ -30,35 +30,34 @@
           Latitude max<br/>
           <input id="lat_max" type="text" value="50.93"/>
         </p>
-        <p style="display:none">
-          Mapwidth<br/>
-          <input id="image_h" type="text" value="600"/>
-        </p>
-        <p style="display:none">
-          Mapheight<br/>
-          <input id="image_w" type="text" value="1000"/>
+        <p>
+          <h5>Show JSON-DATA?
+          <input id="format_json" type="checkbox"/><h5>
         </p>
         <p>
-          Show JSON-DATA?  
-          <input id="format_json" type="checkbox"/>
+          <h5>Show Steet-Labels:
+          <input id="street_label" type="checkbox"/></h5>
         </p>
         <p>
-          Show Steet-Labels:
-          <input id="street_label" type="checkbox"/>
+          <h5>Layout:</h5>
+          <select class="layout">
+            <option value="osm1" selected="selected">Layout 1</option>
+            <option value="osm2">Layout 2</option>
+          </select>
         </p>
+        <input id="btn_load" type="button" value="Load Map"/>
         <p>
-          Render Tags:<br/>
+          <h5>Render Tags:</h5>
           <table>
             <tr><td>landuse:</td><td><input id="landuse" checked type="checkbox"/></td></tr>
+            <tr><td>place:</td><td><input id="place" checked type="checkbox"/></td></tr>
             <tr><td>leisure:</td><td><input id="leisure" checked type="checkbox"/></td></tr>
             <tr><td>natural:</td><td><input id="natural" checked type="checkbox"/></td></tr>
             <tr><td>aeroway:</td><td><input id="aeroway" checked type="checkbox"/></td></tr>
-            <tr><td>man made:</td><td><input id="man_made" checked type="checkbox"/></td></tr>
             <tr><td>military:</td><td><input id="military" checked type="checkbox"/></td></tr>
             <tr><td>building:</td><td><input id="building" checked type="checkbox"/></td></tr>
             <tr><td>historic:</td><td><input id="historic" checked type="checkbox"/></td></tr>
             <tr><td>amenity:</td><td><input id="amenity" checked type="checkbox"/></td></tr>
-
             <tr><td>boundary:</td><td><input id="boundary" checked type="checkbox"/></td></tr>
             <tr><td>waterway:</td><td><input id="waterway" checked type="checkbox"/></td></tr>
             <tr><td>power:</td><td><input id="power" checked type="checkbox"/></td></tr>
@@ -67,21 +66,11 @@
             <tr><td>aerialway:</td><td><input id="aerialway" checked type="checkbox"/></td></tr>
           </table>
         </p>
-        <p>
-          Layout:<br/>
-          <select class="layout">
-            <option value="osm1" selected="selected">Layout 1</option>
-            <option value="osm2">Layout 2</option>
-          </select>
-        </p>
-        <input id="btn_load" type="button" value="Load Map"/>
       </form>
-<!--      <div style="background:yellow;" id="btn_load">Load Map</div>-->
       <div>Datasource: <a href="http://openstreetmap.org">http://openstreetmap.org</a></div>
     </div></div>
     <div id=map style="float:right">
       <div id="image">
-    <!--    <embed src="svg_test/show/13.33/13.34/50.92/50.93/650/700" type="image/svg+xml" />-->
       </div>
     </div>
   </body>

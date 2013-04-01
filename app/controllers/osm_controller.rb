@@ -22,8 +22,8 @@ class OsmController < ApplicationController
     x_max=((b/h)*(y_max-y_min)/(Math.cos (y_min*(Math::PI/180)) ))+x_min
 
     #get data from overpass-api
-    #uri = URI.parse(URI.encode('http://overpass-api.de/api/interpreter?data=[out:json];(node('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');rel(bn)->.x;way('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');node(w)->.x;);out qt;'))
-    uri= URI.parse(URI.encode('http://localhost:3000/interpreter1.json'))
+    uri = URI.parse(URI.encode('http://overpass-api.de/api/interpreter?data=[out:json];(node('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');rel(bn)->.x;way('+y_min.to_s+','+x_min.to_s+','+y_max.to_s+','+x_max.to_s+');node(w)->.x;);out qt;'))
+    #uri= URI.parse(URI.encode('http://localhost:3000/interpreter1.json'))
     http = Net::HTTP.new(uri.host, uri.port)
     response = http.request(Net::HTTP::Get.new(uri.request_uri))
     
@@ -63,7 +63,7 @@ class OsmController < ApplicationController
       svg.gsub!("\\246","Ä")
       svg+="<!--Time: "+t.to_s+" -->"
     end
-    
+
     #response result
     respond_to do |format|
 	    format.json { render json: response.body }
