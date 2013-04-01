@@ -1,15 +1,7 @@
-// Place all the styles related to the test_osm controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
-
-
-path {
-    fill: black;
-}
 
 path{
   fill:none;
-  stroke:black;
+  stroke:none;
   stroke-width:3;
   visibility:visible;
 }
@@ -20,11 +12,14 @@ path{
 .leisure_park, .leisure_playground{
   fill:#b6fdb6;
   stroke-width:1px;
+  stroke: black;
 }
 .leisure_garden{
   fill:#cfeca8;
   stroke-width:1px;
+  stroke: black;
 }
+
 /*
  * Gebäute
  */
@@ -33,8 +28,8 @@ path{
   stroke:black;
   stroke-width:1;
 }
-.building_yes, .building_apartments, .building_garages , .building_dormitory, .amenity_social_facility{
-  @include building(brown);
+.building_yes, .building_apartments,.amenity_hospital, .building_garages , .building_dormitory, .amenity_social_facility, .military_barracks{
+  @include building(#663333);
 }
 .building_no{
   @include building(green)
@@ -45,16 +40,18 @@ path{
 .amenity_parking{
   fill:#f7efb7;
   stroke-width:1px;
+  stroke:gray;
 }
 .amenity_university,
 .amenity_college,
 .amenity_school,
-.amenity_hospital,
 .amenity_kindergarten{
   fill:#f0f0d8;
-  fill-opacity:0.2;
+  fill-opacity:0.5;
   stroke-width:1px;
+  stroke: black;
 }
+
 /*
  * Landnutzung
  */
@@ -66,7 +63,7 @@ path{
 .landuse_allotments {
   @include landuse(#e5c7ab);
 }
-.landuse_village_green {
+.landuse_village_green, .landuse_vineyard{
   @include landuse(green);
 }
 .landuse_meadow, .landuse_grass{
@@ -84,13 +81,19 @@ path{
 .landuse_farmyard{
   @include landuse(#ddbf92)
 }
-.landuse_commercial{
+.landuse_commercial, .landuse_industrial, .landuse_railway{
   @include landuse(#efc8c8)
 }
 .landuse_garages{
   @include landuse(#999966);
-  fill-opacity:0.2;
 }
+.landuse_military{
+  @include landuse(red);
+}
+.landuse_basin, .landuse_reservoir{
+  @include landuse(blue);
+}
+
 /*
  *Wege
  */
@@ -136,6 +139,7 @@ path{
 .highway_platform{
   fill:black;
 }
+
 /*
  * Schienen
  */
@@ -148,6 +152,7 @@ path{
 .railway_rail{
   @include railway(black,2px,7px)
 }
+
 /*
  * Sonstiges
  */
@@ -157,7 +162,8 @@ path{
 }
 .leisure_pitch{
   fill:#8ad3af;
-  stroke-width:1px
+  stroke-width:0.5px;
+  stroke:black;
 }
 .waterway_stream{
   @include highway(blue,5px);
@@ -172,3 +178,77 @@ path{
 .natural_water{
   fill:blue;
 }
+
+/*
+ * Power
+ */
+@mixin powerline($width){
+  stroke:black;
+  stroke-width:$width;
+  fill:none;
+}
+.power_line{
+  @include powerline(2px);
+} 
+.power_minor_line{
+  @include powerline(1px);
+}
+
+.power_station, .power_sub_station{
+  fill: gray;
+  stroke:black;
+  stroke-width:1px;
+}
+
+/*
+ * Barrier
+ */
+@mixin barrier($color,$width){
+  stroke:$color;
+  stroke-width:$width;
+  fill: none;
+}
+
+.barrier_city_wall, .barrier_retaining_wall, .barrier_wall{
+  @include barrier(black,2px);
+}
+.barrier_ditch{
+  @include barrier(blue,2px);
+}
+.barrier_fence{
+  @include barrier(#996633,1px);
+}
+.barrier_hedge{
+  @include barrier(green,2px);
+}
+/*
+ * Grenzen
+ */
+@mixin boundary($width,$color){
+  @include barrier($color,$width)
+}
+.boundary_administrative{
+  @include boundary(2px,red);
+}
+.boundary_maritime{
+  @include boundary(2px,green);
+}
+/*
+ * Flughäfen
+ */
+.aeroway_terminal{
+  fill:#FF00FF;
+  stroke:black;
+  stroke-width:1px;
+}
+.aeroway_taxiway, .aeroway_runway{
+  @include highway(#660066,2px);
+}
+.aeroway_apron{
+  fill:#660066;
+}
+
+.place_town, .place_city, .place_suburb, .place_village, .place_hamlet{
+  fill:#FFCCCC
+}
+
