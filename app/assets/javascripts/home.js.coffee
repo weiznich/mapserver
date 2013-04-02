@@ -32,15 +32,13 @@ $(->
     #make request and show result
     path='osm/show/'+lon_min+'/'+lon_max+'/'+lat_min+'/'+lat_max+'/'+w+'/'+h+'/'+format
     $('#image').html('<p>Loading Map</p>')
-    console.log "Start Post"
     $.ajax {
       url: path,
       type: 'post'
       data: { iftext: text,render_keys:keys }
       success:(data) ->
         if format=='svg'
-          console.log 'svg'
-          $('#image').html(data.activeElement)
+          $('#image').html(data.documentElement)
         else
           $('#image').html(JSON.stringify data , null)
         $('#image').width(w)
